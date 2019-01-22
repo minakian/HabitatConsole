@@ -18,7 +18,7 @@ def makeform(root, fields):
     ent.insert(0,'0')
     row.pack(side=TOP, fill=X, padx=5, pady=1)
     lab.pack(side=LEFT)
-    ent.pack(side=LEFT, fill=X)
+    ent.pack(side=LEFT, expand=YES, fill=X)
     entries[field] = ent
   entries['ProductID'].delete(0, END)
   entries['ProductID'].insert(0, '3c0052001751353432393433')
@@ -43,8 +43,8 @@ def getGlobal(number, entries):
 
   result = requests.get(link, params=params)
 
-  entries['global1'].delete(0,END)
-  entries['global1'].insert(0, result.json()['result'])
+  entries['global%s' % (number) ].delete(0,END)
+  entries['global%s' % (number)].insert(0, result.json()['result'])
   return
 
 if __name__ == '__main__':
@@ -52,7 +52,15 @@ if __name__ == '__main__':
   ents = makeform(root, fields)
   root.bind('<Return>', (lambda event, e=ents: fetch(e)))
   b1 = Button(root, text='Global 1', command=(lambda e=ents: getGlobal(1, e)))
-  b1.pack(side=LEFT, padx=5, pady=5)
+  b1.pack(side=LEFT, padx=5, pady=1)
+  b2 = Button(root, text='Global 2', command=(lambda e=ents: getGlobal(2, e)))
+  b2.pack(side=LEFT, padx=5, pady=1)
+  b3 = Button(root, text='Global 3', command=(lambda e=ents: getGlobal(3, e)))
+  b3.pack(side=LEFT, padx=5, pady=1)
+  b4 = Button(root, text='Global 4', command=(lambda e=ents: getGlobal(4, e)))
+  b4.pack(side=LEFT, padx=5, pady=1)
+  b5 = Button(root, text='Quit', command=(lambda : quit()))
+  b5.pack(side=RIGHT, padx=5, pady=1)
   root.mainloop()
 
 
