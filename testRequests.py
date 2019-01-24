@@ -7,34 +7,57 @@ import time
 from tkinter import *
 from datetime import datetime
 
-fields = ('ProductID', 'Access Token', 'global1', 'global2', 'global3', 'global4')
+fields = ('ProductID', 'Access Token')
+global_vars = ('global1', 'global2', 'global3', 'global4')
+local_vars = ('local1', 'local2', 'local3', 'local4', 'local5', 'local6')
 
 def makeform(root, fields):
   entries = {}
   for field in fields:
     row = Frame(root)
     lab = Label(row, width=15, text=field+':', anchor='w')
-    ent = Entry(row)
+    ent = Entry(row, width=25)
     ent.insert(0,'0')
     row.pack(side=TOP, fill=X, padx=5, pady=1)
     lab.pack(side=LEFT)
     ent.pack(side=LEFT, expand=YES, fill=X)
     entries[field] = ent
-  entries['ProductID'].delete(0, END)
-  entries['ProductID'].insert(0, '3c0052001751353432393433')
-
-  entries['Access Token'].delete(0, END)
-  entries['Access Token'].insert(0, '062798c41c94ae547fbf7a1c983b7b076a34608c')
   return entries
+
+def makerow_with_button(root, field):
+  row = Frame(root)
+  entry = Entry(row, width=25)
+  entry.insert(0,'0')
+  button = Button(row, width=10, text=fields[i], command=(lambda e=entries : getVariable(i+1, e)))
+
+def makeform_variables(root, fields):
+  entries = {}
+  for i in range(len(fields)):
+    row = Frame(root)
+    but = Button(row, width=10, text=fields[i], command=(lambda e=entries : getVariable(i+1, e))) # i is 6 for all buttons
+    lab = Label(row, width=15, text=fields[i]+':', anchor='w')
+    ent = Entry(row, width=25)
+    ent.insert(0,'0')
+    row.pack(side=TOP, fill=X, padx=5, pady=1)
+    but.pack(side=LEFT)
+    lab.pack(side=LEFT)
+    ent.pack(side=LEFT, expand=YES, fill=X)
+    entries[fields[i]] = ent
+  return entries
+
+def getVariable(number, entries):
+  print(number)
+  for entry in entries:
+    print(entry)
 
 def fetch(entry):
   return
 
 def getGlobal(number, entries):
-  if entries['ProductID'] == '0':
+  if entries['ProductID'].get() == '0':
     print("Need a product ID")
     return
-  if entries['Access Token'] == '0':
+  if entries['Access Token'].get() == '0':
     print("Need access token")
     return
   params = (('access_token', entries['Access Token'].get()),)
@@ -50,23 +73,37 @@ def getGlobal(number, entries):
 if __name__ == '__main__':
   root = Tk()
   ents = makeform(root, fields)
+
+  ents['ProductID'].delete(0, END)
+  ents['ProductID'].insert(0, '3c0052001751353432393433')
+  ents['Access Token'].delete(0, END)
+  ents['Access Token'].insert(0, '')
+
   root.bind('<Return>', (lambda event, e=ents: fetch(e)))
-  b1 = Button(root, text='Global 1', command=(lambda e=ents: getGlobal(1, e)))
+
+  row = Frame(root)
+  row.pack(side=TOP, fill=X, padx=5, pady=1)
+
+  b1 = Button(row, text='Global 1', command=(lambda e=ents: getGlobal(1, e)))
   b1.pack(side=LEFT, padx=5, pady=1)
-  b2 = Button(root, text='Global 2', command=(lambda e=ents: getGlobal(2, e)))
+  b2 = Button(row, text='Global 2', command=(lambda e=ents: getGlobal(2, e)))
   b2.pack(side=LEFT, padx=5, pady=1)
-  b3 = Button(root, text='Global 3', command=(lambda e=ents: getGlobal(3, e)))
+  b3 = Button(row, text='Global 3', command=(lambda e=ents: getGlobal(3, e)))
   b3.pack(side=LEFT, padx=5, pady=1)
-  b4 = Button(root, text='Global 4', command=(lambda e=ents: getGlobal(4, e)))
+  b4 = Button(row, text='Global 4', command=(lambda e=ents: getGlobal(4, e)))
   b4.pack(side=LEFT, padx=5, pady=1)
-  b5 = Button(root, text='Quit', command=(lambda : quit()))
+  b5 = Button(row, text='Quit', command=(lambda : quit()))
   b5.pack(side=RIGHT, padx=5, pady=1)
+
+  row2 = Frame(root)
+  row2.pack(side=BOTTOM, fill=X, padx=5, pady=1)
+  locls = makeform_variables(row2, local_vars)
   root.mainloop()
 
 
 '''
 params = (
-    ('access_token', '062798c41c94ae547fbf7a1c983b7b076a34608c'),
+    ('access_token', ''),
 )
 
 response = requests.get('https://api.particle.io/v1/devices/3c0052001751353432393433/global3', params=params)
